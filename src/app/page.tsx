@@ -1,9 +1,7 @@
 "use client"
-
-import "@farcaster/auth-kit/styles.css";
-import { AuthKitProvider, SignInButton, useProfile } from "@farcaster/auth-kit";
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { AuthKitProvider } from "@farcaster/auth-kit";
+import Home from "./LoggedIn";
+import NotLoggedIN from "./NotLoggedIN";
 import './styles.css';
 
 const config = {
@@ -13,111 +11,12 @@ const config = {
   siweUri: "https://example.com/login",
 };
 
-interface User {
-  username: string;
-  points: number;
-}
+export default function page () {
+  
+  return(<>
+  <AuthKitProvider config={config}>
+    <NotLoggedIN/>
+  </AuthKitProvider>
 
-const getRandomGradient = () => {
-  const colors = ['#a854a8', '#d69350', '#5183a0', '#a05e53']; // Add more colors as needed
-  const randomColor1 = colors[Math.floor(Math.random() * colors.length)];
-  const randomColor2 = colors[Math.floor(Math.random() * colors.length)];
-  return `linear-gradient(to right, ${randomColor1}, ${randomColor2})`;
-};
-
-function Leaderboard() {
-  const [leaderboardData, setLeaderboardData] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchLeaderboardData = async () => {
-      try {
-        const response = await axios.get<User[]>('https://lolly-leaderboard-backend.vercel.app/leaderboard');
-        setLeaderboardData(response.data);
-        setLoading(false); // Set loading to false when data is loaded
-      } catch (error) {
-        console.error(error);
-        setLoading(false); // Set loading to false on error
-      }
-    };
-
-    fetchLeaderboardData();
-  }, []);
-
-  return (
-    <div>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {leaderboardData.map((user, index) => (
-            <li key={index} className="leaderboard-item">
-              <div className="user-container" style={{ background: getRandomGradient() }}>
-                <div>
-                <span className="number">{index + 1}.</span>
-                <span className="username">{user.username}</span>
-                </div>
-                <span className="points">{user.points} 🍭</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-function Navbar() {
-  return (
-    <div className="navbar">
-      <h2 style={{ color: 'white' }}>Lollypop Leaderboard</h2>
-      <SignInButton />
-    </div>
-  );
-}
-
-
-function Footer() {
-  const profile = useProfile();
-  const [userData, setUserData] = useState({ username: 'Your Points', points: '--' });
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        if (profile.isAuthenticated) {
-          const response = await axios.post('https://lolly-leaderboard-backend.vercel.app/getUserDetails', {
-            fid: profile.profile.fid,
-          });
-          setUserData(response.data.user);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUserData();
-  }, [profile]);
-
-  return (
-    <div className="footer">
-      <div className="footer-item">
-        <span>{userData.username}</span>
-      </div>
-      <div className="footer-item">
-        <span>{userData.points} 🍭</span>
-      </div>
-    </div>
-  );
-}
-
-export default function Home() {
-  return (
-    <main style={{ fontFamily: 'Inter, "Inter Placeholder", sans-serif' }}>
-      <AuthKitProvider config={config}>
-        <Navbar />
-        <Leaderboard />
-        <Footer />
-      </AuthKitProvider>
-    </main>
-  );
+  </>)
 }
