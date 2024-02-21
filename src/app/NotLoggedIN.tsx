@@ -39,7 +39,7 @@ export default function NotLoggedIN() {
             {isAuthenticated ? (
           <Home />
         ) : (<main className='bg-white h-screen w-screen flex items-center justify-center' >
-        <video className="video" width="460" height="315" src="/lollypop.mp4" autoPlay muted loop></video>
+        <video className="video" width="180" height="315/3" src="/lollypop.mp4" autoPlay muted loop></video>
             <div className="z-10 text-cyan" >
             <SignInButton onSuccess={handleSignInSuccess} onSignOut={handleSignOut} />
             </div>
